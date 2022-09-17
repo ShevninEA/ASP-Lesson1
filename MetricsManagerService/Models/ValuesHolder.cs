@@ -1,32 +1,47 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MetricsManagerService.Models
 {
     public class ValuesHolder
     {
+        private List<TimeSpan> _valuesTime;
 
-        private List<string> _values;
+        private List<int> _valuesTemp;
 
         public ValuesHolder()
         {
-            _values = new List<string>();
+            _valuesTime = new List<TimeSpan>();
+            _valuesTemp = new List<int>();
         }
 
-        public void Add(string value)
+        public void Add(TimeSpan newValueTime, int newValueTemp)
         {
-            _values.Add(value);
+            _valuesTime.Add(newValueTime);
+            _valuesTemp.Add(newValueTemp);
         }
 
         public string Get()
         {
-            return string.Join(',', _values.ToArray());
+            string buf = string.Empty;
+            for (int i = 0; i < _valuesTime.Count; i++)
+            {
+                buf += $"{_valuesTime[i]}\tТемпература({_valuesTemp[i]}℃)\n";
+            }
+
+            return buf;
         }
 
-        public List<string> Values
+        public List<TimeSpan> ValuesTime
         {
-            get { return _values; }
-            set { _values = value; }
+            get { return _valuesTime; }
+            set { _valuesTime = value; }
         }
 
+        public List<int> ValuesTemp
+        {
+            get { return _valuesTemp; }
+            set { _valuesTemp = value; }
+        }
     }
 }
