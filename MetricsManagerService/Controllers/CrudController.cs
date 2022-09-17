@@ -1,28 +1,22 @@
 ﻿using MetricsManagerService.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 
 namespace MetricsManagerService.Controllers
 {
-    //[Route("api/[controller]")]
     [Route("api/crud")]
     [ApiController]
     public class CrudController : ControllerBase
     {
-        //private readonly ValuesHolder _holder = new ValuesHolder();
         private ValuesHolder _holder;
-
-        //public CrudController()
-        //{
-
-        //}
 
         public CrudController(ValuesHolder holder)
         {
             _holder = holder;
-        }
 
+        }
 
         [HttpGet("read")]
         public IActionResult Read()
@@ -31,32 +25,29 @@ namespace MetricsManagerService.Controllers
         }
 
         [HttpPost("create")]
-        public IActionResult Create([FromQuery] string input)
+        public IActionResult Create([FromQuery] TimeSpan newValueTime, [FromQuery] int newValueTemp)
         {
-            _holder.Add(input);
+            _holder.Add(newValueTime, newValueTemp);
             return Ok();
         }
 
         [HttpPut("update")]
-        public IActionResult Update([FromQuery] string stringsToUpdate,
-        [FromQuery] string newValue)
+        public IActionResult Update([FromQuery] TimeSpan stringsToUpdate,
+        [FromQuery] int newValue)
         {
-            for (int i = 0; i < _holder.Values.Count; i++)
+            for (int i = 0; i < _holder.ValuesTemp.Count; i++)
             {
-                if (_holder.Values[i] == stringsToUpdate)
-                    _holder.Values[i] = newValue;
+                if (_holder.ValuesTime[i] == stringsToUpdate)
+                    _holder.ValuesTemp[i] = newValue;
             }
             return Ok();
         }
 
         [HttpDelete("delete")]
-        public IActionResult Delete([FromQuery] string stringsToDelete)
+        public IActionResult Delete([FromQuery] TimeSpan minValueToDelete, [FromQuery] TimeSpan maxValueToDelete)
         {
-            _holder.Values = _holder.Values.Where(w => w !=
-            stringsToDelete).ToList();
+            _holder.ValuesTime = _holder.ValuesTime.Where(w => w < minValueToDelete || w > maxValueToDelete).ToList();
             return Ok();
         }
-
-
     }
 }
